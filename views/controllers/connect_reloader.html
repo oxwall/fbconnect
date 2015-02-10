@@ -1,0 +1,13 @@
+{script}{literal}
+
+FB.ensureInit(function(){
+    FB.Connect.requireSession(function(){
+        window.location.reload();
+    });    
+    
+});
+
+{/literal}{/script}
+
+<div id="fbc-preloader" class="fbconnect_master_preloader fbconnect_preloader_big">
+</div>

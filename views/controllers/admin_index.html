@@ -1,0 +1,26 @@
+{form name='FBCONNECT_AccessForm'}
+
+{block_decorator name='box' addClass='ow_stdmargin' type="empty"}
+    {text key="fbconnect+register_app_desc"}
+{/block_decorator}
+<table class="ow_table_1 ow_form">
+    <tr class="ow_tr_first">
+        <th class="ow_name ow_txtleft" colspan="3">
+            <span class="ow_section_icon ow_ic_key">{text key='fbconnect+app_register_title'}</span>
+        </th>
+    </tr>
+    <tr class="{cycle name="install" values="ow_alt1,ow_alt2"}">
+        <td class="ow_label">{text key='fbconnect+access_settings_app_id_label'}</td>
+        <td class="ow_value">{input name='appId'} {error name='appId'}</td>
+        <td class="ow_desc"></td>
+    </tr>
+    <tr class="{cycle name="install" values="ow_alt1,ow_alt2"} ow_tr_last">
+        <td class="ow_label">{text key='fbconnect+access_settings_api_secret_label'}</td>
+        <td class="ow_value">{input name='secret'} {error name='secret'}</td>
+        <td class="ow_desc"></td>
+    </tr>
+   
+</table>
+<div class="clearfix ow_submit"><div class="ow_right">{submit name='save' class='ow_ic_save'}</div><div class="ow_right"></div></div>
+
+{/form}

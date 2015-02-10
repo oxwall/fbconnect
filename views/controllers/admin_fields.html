@@ -1,0 +1,51 @@
+{$menu}
+
+<p>
+{text key="fbconnect+configuration_fields_legend"}
+</p>
+<form method="post" action="{$formAction}">
+<table class="ow_table_2 ow_stdmargin ow_automargin ow_wide">
+
+    <tr class="ow_tr_first ow_tr_last">
+        <th width="50%" align="center">{text key="fbconnect+configuration_fields_questions_label"}</th>
+        <th align="center">{text key="fbconnect+configuration_fields_fbfields_label"}</th>
+    </tr>
+    <tr class="ow_tr_delimiter"><td colspan="2"></td></tr>
+    
+    {foreach from=$questionList item=section name="sections"}
+        <tr class="ow_tr_first">
+            <th colspan="2">{section_lang name=$section.name}</th>
+        </tr>
+        {foreach from=$section.items item=question name="items"}
+        	
+		    <tr class="{cycle name="view1" values="ow_alt1,ow_alt2"} {if $smarty.foreach.items.last}ow_tr_last{/if}">
+		        <td class="ow_label">{question_lang name=$question.name}</td>
+		        <td class="ow_value">
+                    {if count($question.fbFields) > 1}
+                        <select name="fb_alias[{$question.name}]">
+                            <option value="">
+                                    Select
+                            </option>
+                            {foreach from=$question.fbFields item=fbf}
+                                <option value="{$fbf}" {if $question.alias == $fbf}selected="selected"{/if}>
+                                    {$fbf}
+                                </option>
+                            {/foreach}
+                        </select>
+                    {else}
+                        {$question.fbFields.0}
+                    {/if}
+                </td>
+		    </tr>
+        {/foreach}
+        {if !$smarty.foreach.sections.last}
+        	<tr class="ow_tr_delimiter"><td colspan="2"></td></tr>
+        {/if}
+    {/foreach}
+
+</table>
+<div class="clearfix ow_sdtmargin"><div class="ow_right">{decorator name="button" type="submit" class="ow_ic_save ow_positive" langLabel='fbconnect+save_btn_label'}</div><div class="ow_right"></div></div>
+</form>
+<p>
+{text key="fbconnect+configuration_fields_suggest" questionsUrl=$questions_url}
+</p>

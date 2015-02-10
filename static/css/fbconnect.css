@@ -1,0 +1,40 @@
+.fbconnect_preloader {
+    background: url(../img/preloader.gif) no-repeat;
+}
+
+.fbconnect_preloader_big {
+    background: url(../img/preloader-big.gif) no-repeat;
+}
+
+.fbconnect_master_preloader {
+    width: 100%;
+    height: 100px;
+    background-position: center center;
+}
+
+.ow_ico_signin_f {
+    background-image: url(../img/ico_signin_f.png);
+}
+.fb_connect_wrap {
+	cursor: pointer;
+	display: inline-block;
+    border-bottom: 1px solid #1A356E;
+    border-right: 1px solid #29447E;
+    border-top: 1px solid #29447E;
+	height: 20px;    
+}
+.fb_button {
+	background:  #5F78AB url(../img/fb_ico.png) no-repeat 0px 0px;
+	padding-left: 22px;
+	height: 22px;
+	display: inline-block;
+	color: #fff;	
+}
+.ow_content a.fb_button {
+	color: #fff;
+}
+.fb_button_text {
+	border-top: 1px solid #879AC0;
+	padding: 0px 6px 3px;
+	font-weight: bold;
+}
