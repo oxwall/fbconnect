@@ -68,26 +68,22 @@ class FBCONNECT_CLASS_EventHandler
     public function getConfiguration( OW_Event $event )
     {
         $service = FBCONNECT_BOL_Service::getInstance();
-        
         $appId = $service->getFaceBookAccessDetails()->appId;
-        $secret = $service->getFaceBookAccessDetails()->secret;
-        $appAccessToken = $service->getFaceBookAccessDetails()->appAccessToken;
-        
-        if ( empty($appId) || empty($secret) )
+
+        if ( empty($appId) )
         {
             return null;
         }
         
         $data = array(
-            "appId" => $appId,
-            "secret" => $secret,
-            "accessToken" => $appAccessToken
+            "appId" => $appId
         );
         
         $event->setData($data);
         
         return $data;
     }
+
     
     public function genericInit()
     {
