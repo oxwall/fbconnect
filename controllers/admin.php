@@ -85,22 +85,6 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
 
         $menuItems[] = $item;
 
-        /*
-        *
-        * Disbale field configuration
-        *
-        
-        $item = new BASE_MenuItem();
-        $item->setLabel($language->text('fbconnect', 'menu_item_configuration_fields'));
-        $item->setUrl(OW::getRouter()->urlForRoute('fbconnect_configuration_fields'));
-        $item->setKey('fbconnect_fields');
-        $item->setIconClass('ow_ic_files');
-        $item->setOrder(1);
-
-        $menuItems[] = $item;
-        
-        */
-
         return new BASE_CMP_ContentMenu($menuItems);
     }
 
@@ -119,16 +103,6 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
 
     public function settings( $params )
     {
-        $settingForm = new FBCONNECT_SettingsForm();
-        $this->addForm($settingForm);
-
-        if ( OW::getRequest()->isPost() && $settingForm->isValid($_POST) )
-        {
-            $res = $settingForm->process();
-            OW::getFeedback()->info(OW::getLanguage()->text('fbconnect', 'configuration_settings_saved'));
-            $this->redirect();
-        }
-
         $appId = $this->requireAppId();
 
         if ( !empty($_GET['rm-app']) && $_GET['rm-app'] == 1 )
@@ -157,61 +131,6 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
         $this->assign('resetRspUrl', OW::getRouter()->urlFor('FBCONNECT_CTRL_Admin', 'ajaxResetApplication'));
     }
 
-    public function fields()
-    {
-	    $this->redirect(OW::getRouter()->urlForRoute("fbconnect_configuration_settings")); // Disable field configuration
-    
-        $appId = $this->requireAppId();
-
-        $this->addComponent('menu', $this->getMenu());
-        $this->assign('questions_url', OW::getRouter()->urlForRoute('questions_index'));
-
-        OW::getDocument()->setHeading(OW::getLanguage()->text('fbconnect', 'heading_configuration'));
-        OW::getDocument()->setHeadingIconClass('ow_ic_key');
-
-        $service = FBCONNECT_BOL_Service::getInstance();
-        $ignoreQuestionList = array();
-        $questionDtoList = $service->getOWQuestionDtoList();
-        $aliases = $service->findAliasList();
-
-        $questionList = array();
-        foreach ( $questionDtoList as $dto )
-        {
-            /* @var $dto BOL_Question */
-            if ( in_array($dto->name, $ignoreQuestionList) )
-            {
-                continue;
-            }
-
-            $questionList[$dto->sectionName][(int) $dto->sortOrder] = array(
-                'name' => $dto->name,
-                'fbFields' => $service->getPossibleFbFieldList($dto->name),
-                'alias' => empty($aliases[$dto->name]) ? '' : $aliases[$dto->name]
-            );
-        }
-
-        $questionSectionDtoList = BOL_QuestionService::getInstance()->findAllSections();
-
-        $tplQuestionList = array();
-        foreach ( $questionSectionDtoList as $sectionDto )
-        {
-            if ( empty($questionList[$sectionDto->name]) )
-            {
-                continue;
-            }
-
-            /* @var $sectionDto BOL_QuestionSection */
-            $tplQuestionList[(int) $sectionDto->sortOrder] = array(
-                'name' => $sectionDto->name,
-                'items' => $questionList[$sectionDto->name]
-            );
-        }
-        ksort($tplQuestionList);
-        $this->assign('questionList', $tplQuestionList);
-
-        $this->assign('formAction', OW::getRouter()->urlFor('FBCONNECT_CTRL_Admin', 'formProcess'));
-    }
-
     public function ajaxResetApplication()
     {
         if ( !OW::getRequest()->isAjax() )
@@ -225,60 +144,6 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
         }
 
         exit(json_encode(OW::getLanguage()->text('fbconnect', 'app_reset_failed_msg')));
-    }
-
-    public function formProcess()
-    {
-        if ( empty($_POST['fb_alias']) )
-        {
-            $this->redirect(OW::getRouter()->urlForRoute('fbconnect_configuration_fields'));
-        }
-
-        $list = $_POST['fb_alias'];
-
-        foreach ( $list as $question => $fbField )
-        {
-            if ( !empty($fbField) )
-            {
-                FBCONNECT_BOL_Service::getInstance()->assignQuestion($question, $fbField);
-            }
-            else
-            {
-                FBCONNECT_BOL_Service::getInstance()->unsetQuestion($question);
-            }
-        }
-
-        $this->redirect(OW::getRouter()->urlForRoute('fbconnect_configuration_fields'));
-    }
-}
-
-class FBCONNECT_SettingsForm extends Form
-{
-
-    public function __construct()
-    {
-        parent::__construct('FBCONNECT_SettingsForm');
-
-        $config = OW::getConfig();
-
-        $field = new CheckboxField('allowSynchronize');
-        $field->setValue((bool) $config->getValue('fbconnect', 'allow_synchronize'));
-        $this->addElement($field);
-
-        // submit
-        $submit = new Submit('save');
-        $submit->setValue(OW::getLanguage()->text('fbconnect', 'save_btn_label'));
-        $this->addElement($submit);
-    }
-
-    public function process()
-    {
-        $values = $this->getValues();
-        $config = OW::getConfig();
-
-        $config->saveConfig('fbconnect', 'allow_synchronize', $values['allowSynchronize']);
-
-        return array('result' => true);
     }
 }
 
