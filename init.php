@@ -49,15 +49,11 @@ OW::getRouter()->addRoute(new OW_Route('fbconnect_xd_receiver', 'fbconnect_chann
 $route = new OW_Route('fbconnect_configuration', 'admin/plugins/fbconnect', 'FBCONNECT_CTRL_Admin', 'index');
 OW::getRouter()->addRoute($route);
 
-$route = new OW_Route('fbconnect_configuration_fields', 'admin/plugins/fbconnect/fields', 'FBCONNECT_CTRL_Admin', 'fields');
-OW::getRouter()->addRoute($route);
-
 $route = new OW_Route('fbconnect_configuration_settings', 'admin/plugins/fbconnect/settings', 'FBCONNECT_CTRL_Admin', 'settings');
 OW::getRouter()->addRoute($route);
 
 $registry = OW::getRegistry();
 $registry->addToArray(BASE_CTRL_Join::JOIN_CONNECT_HOOK, array(new FBCONNECT_CMP_ConnectButton(), 'render'));
-$registry->addToArray(BASE_CTRL_Edit::EDIT_SYNCHRONIZE_HOOK, array(new FBCONNECT_CMP_SynchronizeButton(), 'render'));
 
 $eventHandler = new FBCONNECT_CLASS_EventHandler();
 $eventHandler->init();

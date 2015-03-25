@@ -171,50 +171,6 @@ class FBCONNECT_CTRL_Connect extends OW_ActionController
         $this->redirect($backUrl);
     }
 
-    public function synchronize()
-    {
-        $backUri = empty($_GET['backUri']) ? '' : urldecode($_GET['backUri']);
-        $backUrl = OW_URL_HOME . $backUri;
-
-        $language = OW::getLanguage();
-
-        $userId = OW::getUser()->getId();
-
-        if ( empty($userId) )
-        {
-            throw new AuthenticateException();
-        }
-
-        $fbUser = $this->service->fbRequireUser();
-
-        $questionsService = BOL_QuestionService::getInstance();
-        $userService = BOL_UserService::getInstance();
-
-        $accountType = $userService->findUserById($userId)->getAccountType();
-        $editQuestionsDtoList = $questionsService->findEditQuestionsForAccountType($accountType);
-
-        $editQuestions = array();
-        foreach ( $editQuestionsDtoList as $item )
-        {
-            $editQuestions[] = $item['name'];
-        }
-
-        $questions = $this->service->requestQuestionValueList($fbUser, $editQuestions, $userId);
-
-        if ( !empty($questions['email']) && $userService->isExistEmail($questions['email']) )
-        {
-            unset($questions['email']);
-        }
-
-        $questionsService->saveQuestionsData(array_filter($questions), $userId);
-
-        OW::getFeedback()->info(OW::getLanguage()->text('fbconnect', 'synchronize_success_msg'));
-        $event = new OW_Event(OW_EventManager::ON_USER_EDIT, array('method' => 'facebook', 'userId' => $userId));
-        OW::getEventManager()->trigger($event);
-
-        $this->redirect($backUrl);
-    }
-
     public function xdReceiver()
     {
         $cache_expire = 60*60*24*365;

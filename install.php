@@ -58,7 +58,6 @@ OW::getDbo()->query($sql);
 OW::getConfig()->addConfig('fbconnect', 'api_key', '', 'Facebook Api Key');
 OW::getConfig()->addConfig('fbconnect', 'app_id', '', 'Facebook Application ID');
 OW::getConfig()->addConfig('fbconnect', 'api_secret', '', 'Facebook Application Secret');
-OW::getConfig()->addConfig('fbconnect', 'allow_synchronize', 0, 'Allow synchronization for non-Facebook profiles');
 
 OW::getPluginManager()->addPluginSettingsRouteName('fbconnect', 'fbconnect_configuration_settings');
 

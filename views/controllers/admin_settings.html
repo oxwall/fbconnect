@@ -73,22 +73,3 @@ $('#fbc-reset').click(function(){
     </tr>
 
 </table>
-
-{form name='FBCONNECT_SettingsForm'}
-
-<table class="ow_table_1 ow_form">
-
-    <tr class="ow_tr_first">
-        <th class="ow_name ow_txtleft" colspan="3">
-            <span class="ow_section_icon ow_ic_gear_wheel">{text key='fbconnect+additional_settings_title'}</span>
-        </th>
-    </tr>
-    <tr class="{cycle name="install" values="ow_alt2, ow_alt1"}">
-        <td class="ow_label">{text key='fbconnect+additional_settings_synchronize'}</td>
-        <td class="ow_value">{input name='allowSynchronize'} {error name='allowSynchronize'}</td>
-        <td class="ow_desc">{text key='fbconnect+additional_settings_synchronize_desc'}</td>
-    </tr>
-</table>
-<div class="clearfix ow_submit ow_smallmargin"><div class="ow_right">{submit name='save' class='ow_ic_save'}</div><div class="ow_right"></div></div>
-
-{/form}
