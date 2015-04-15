@@ -52,6 +52,9 @@ OW::getRouter()->addRoute($route);
 $route = new OW_Route('fbconnect_configuration_settings', 'admin/plugins/fbconnect/settings', 'FBCONNECT_CTRL_Admin', 'settings');
 OW::getRouter()->addRoute($route);
 
+$route = new OW_Route('fbconnect_configuration_fields', 'admin/plugins/fbconnect/settings', 'FBCONNECT_CTRL_Admin', 'settings'); // backward compatibility
+OW::getRouter()->addRoute($route);
+
 $registry = OW::getRegistry();
 $registry->addToArray(BASE_CTRL_Join::JOIN_CONNECT_HOOK, array(new FBCONNECT_CMP_ConnectButton(), 'render'));
 
