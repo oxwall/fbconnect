@@ -140,7 +140,7 @@ class FBCONNECT_CTRL_Connect extends OW_ActionController
 
         if ( !empty($questions['picture_big']) )
         {
-            BOL_AvatarService::getInstance()->setUserAvatar($user->id, $questions['picture_big']);
+            BOL_AvatarService::getInstance()->setUserAvatar($user->id, $questions['picture_big'], array('isModerable' => false, 'trackAction' => false ));
 
             unset($questions['picture_small']);
             unset($questions['picture_medium']);
