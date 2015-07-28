@@ -153,7 +153,10 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
             return array();
         }
         
-        $info = $this->getFaceBook()->api("/" . $fbUserId);
+        $fieldsForApi = array_diff($fields, array('pic_big', 'pic_square'));
+        $fieldsForApi = implode(",", $fieldsForApi);
+        
+        $info = $this->getFaceBook()->api("/" . $fbUserId . '?fields=' . $fieldsForApi);
         
         $out = array();
         foreach ( $fields as $field )
