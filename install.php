@@ -62,3 +62,17 @@ OW::getConfig()->addConfig('fbconnect', 'api_secret', '', 'Facebook Application 
 OW::getPluginManager()->addPluginSettingsRouteName('fbconnect', 'fbconnect_configuration_settings');
 
 BOL_LanguageService::getInstance()->importPrefixFromZip($plugin->getRootDir() . 'langs.zip', 'fbconnect');
+
+$preference = BOL_PreferenceService::getInstance()->findPreference('fbconnect_user_credits');
+
+if ( empty($preference) )
+{
+    $preference = new BOL_Preference();
+}
+
+$preference->key = 'fbconnect_user_credits';
+$preference->sectionName = 'general';
+$preference->defaultValue = 0;
+$preference->sortOrder = 1;
+
+BOL_PreferenceService::getInstance()->savePreference($preference);
