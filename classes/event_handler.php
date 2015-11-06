@@ -25,7 +25,7 @@ class FBCONNECT_CLASS_EventHandler
         
         $accountType = OW::getUser()->getUserObject()->getAccountType();
         
-        if(empty($accountType))
+        if( empty($accountType) )
         {
             BOL_PreferenceService::getInstance()->savePreferenceValue('fbconnect_user_credits', 1, $userId);
         }
@@ -98,9 +98,9 @@ class FBCONNECT_CLASS_EventHandler
         $params = $event->getParams();
         $userId = !empty($params['userId']) ? (int) $params['userId'] : OW::getUser()->getId();
 
-        $userCreditpreference = BOL_PreferenceService::getInstance()->getPreferenceValue('fbconnect_user_credits', $userId);
+        $userCreditPreference = BOL_PreferenceService::getInstance()->getPreferenceValue('fbconnect_user_credits', $userId);
         
-        if($userCreditpreference == 1)
+        if( $userCreditPreference == 1 )
         {
             BOL_AuthorizationService::getInstance()->trackAction("base", "user_join");
             
