@@ -22,8 +22,13 @@ class FBCONNECT_CLASS_EventHandler
         }
 
         $userId = (int) $params['userId'];
-
-        BOL_PreferenceService::getInstance()->savePreferenceValue('fbconnect_user_credits', 1, $userId);
+        
+        $accountType = OW::getUser()->getUserObject()->getAccountType();
+        
+        if(empty($accountType))
+        {
+            BOL_PreferenceService::getInstance()->savePreferenceValue('fbconnect_user_credits', 1, $userId);
+        }
         
         $event = new OW_Event('feed.action', array(
                 'pluginKey' => 'base',
@@ -95,16 +100,9 @@ class FBCONNECT_CLASS_EventHandler
 
         $userCreditpreference = BOL_PreferenceService::getInstance()->getPreferenceValue('fbconnect_user_credits', $userId);
         
-        if($userCreditpreference == 1 && OW::getPluginManager()->isPluginActive('usercredits'))
+        if($userCreditpreference == 1)
         {
-            $creditService = USERCREDITS_BOL_CreditsService::getInstance();
-
-            $credits = $creditService->checkBalance('base', 'user_join', $userId);
-
-            if ( $credits === true )
-            {
-                $creditService->trackAction('base', 'user_join', $userId);
-            }
+            BOL_AuthorizationService::getInstance()->trackAction("base", "user_join");
             
             BOL_PreferenceService::getInstance()->savePreferenceValue('fbconnect_user_credits', 0, $userId);
         }
