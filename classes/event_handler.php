@@ -14,6 +14,7 @@ class FBCONNECT_CLASS_EventHandler
     public function afterUserRegistered( OW_Event $event )
     {
         $params = $event->getParams();
+        
 
         if ( $params['method'] != 'facebook' )
         {
@@ -22,6 +23,8 @@ class FBCONNECT_CLASS_EventHandler
 
         $userId = (int) $params['userId'];
 
+        BOL_PreferenceService::getInstance()->savePreferenceValue('fbconnect_user_credits', 1, $userId);
+        
         $event = new OW_Event('feed.action', array(
                 'pluginKey' => 'base',
                 'entityType' => 'user_join',
@@ -83,6 +86,29 @@ class FBCONNECT_CLASS_EventHandler
         
         return $data;
     }
+    
+    public function onAfterUserCompleteProfile( OW_Event $event )
+    {        
+        
+        $params = $event->getParams();
+        $userId = !empty($params['userId']) ? (int) $params['userId'] : OW::getUser()->getId();
+
+        $userCreditpreference = BOL_PreferenceService::getInstance()->getPreferenceValue('fbconnect_user_credits', $userId);
+        
+        if($userCreditpreference == 1 && OW::getPluginManager()->isPluginActive('usercredits'))
+        {
+            $creditService = USERCREDITS_BOL_CreditsService::getInstance();
+
+            $credits = $creditService->checkBalance('base', 'user_join', $userId);
+
+            if ( $credits === true )
+            {
+                $creditService->trackAction('base', 'user_join', $userId);
+            }
+            
+            BOL_PreferenceService::getInstance()->savePreferenceValue('fbconnect_user_credits', 0, $userId);
+        }
+    }
 
     
     public function genericInit()
@@ -96,6 +122,7 @@ class FBCONNECT_CLASS_EventHandler
         OW::getEventManager()->bind('base.splash_screen_exceptions', array($this, "onCollectAccessExceptions"));
         
         OW::getEventManager()->bind('fbconnect.get_configuration', array($this, "getConfiguration"));
+        OW::getEventManager()->bind(OW_EventManager::ON_AFTER_USER_COMPLETE_PROFILE, array($this, "onAfterUserCompleteProfile"));
     }
     
     public function init()
