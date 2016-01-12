@@ -154,6 +154,9 @@ class FBCONNECT_CTRL_Connect extends OW_ActionController
         $authResult = OW_Auth::getInstance()->authenticate($authAdapter);
         if ( $authResult->isValid() )
         {
+            // authenticate user
+            OW::getUser()->login($user->id);
+
             $event = new OW_Event(OW_EventManager::ON_USER_REGISTER, array(
                 'method' => 'facebook',
                 'userId' => $user->id,
