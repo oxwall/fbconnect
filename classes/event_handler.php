@@ -110,6 +110,8 @@ class FBCONNECT_CLASS_EventHandler
     
     public function genericInit()
     {
+        $this->fbConnectAutoload();
+
         OW::getEventManager()->bind(BASE_CMP_ConnectButtonList::HOOK_REMOTE_AUTH_BUTTON_LIST, array($this, "onCollectButtonList"));
         OW::getEventManager()->bind(OW_EventManager::ON_USER_REGISTER, array($this, "afterUserRegistered"));
         OW::getEventManager()->bind(OW_EventManager::ON_USER_EDIT, array($this, "afterUserSynchronized"));
@@ -127,5 +129,21 @@ class FBCONNECT_CLASS_EventHandler
         $this->genericInit();
         
         OW::getEventManager()->bind('admin.add_admin_notification', array($this, "afterUserSynchronized"));
+    }
+
+    private function fbConnectAutoload()
+    {
+        function FBCONNECT_Autoloader( $className )
+        {
+            if ( strpos($className, 'FBCONNECT_FC_') === 0 )
+            {
+                $file = OW::getPluginManager()->getPlugin('fbconnect')->getRootDir() . DS . 'classes' . DS . 'converters.php';
+                require_once $file;
+
+                return true;
+            }
+        }
+
+        spl_autoload_register('FBCONNECT_Autoloader');
     }
 }
