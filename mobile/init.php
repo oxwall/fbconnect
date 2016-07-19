@@ -28,19 +28,6 @@
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-$plugin = OW::getPluginManager()->getPlugin('fbconnect');
-
-function FBCONNECT_Autoloader( $className )
-{
-    if ( strpos($className, 'FBCONNECT_FC_') === 0 )
-    {
-        $file = OW::getPluginManager()->getPlugin('fbconnect')->getRootDir() . DS . 'classes' . DS . 'converters.php';
-        require_once $file;
-
-        return true;
-    }
-}
-spl_autoload_register('FBCONNECT_Autoloader');
 
 OW::getRouter()->addRoute(new OW_Route('fbconnect_login', 'facebook-connect/login', 'FBCONNECT_CTRL_Connect', 'login'));
 OW::getRouter()->addRoute(new OW_Route('fbconnect_synchronize', 'facebook-connect/synchronize', 'FBCONNECT_CTRL_Connect', 'synchronize'));

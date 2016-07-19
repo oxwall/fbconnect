@@ -133,7 +133,7 @@ class FBCONNECT_CLASS_EventHandler
 
     private function fbConnectAutoload()
     {
-        function FBCONNECT_Autoloader( $className )
+        $fbConnectAutoLoader = function ( $className )
         {
             if ( strpos($className, 'FBCONNECT_FC_') === 0 )
             {
@@ -142,8 +142,8 @@ class FBCONNECT_CLASS_EventHandler
 
                 return true;
             }
-        }
+        };
 
-        spl_autoload_register('FBCONNECT_Autoloader');
+        spl_autoload_register($fbConnectAutoLoader);
     }
 }
