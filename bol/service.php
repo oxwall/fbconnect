@@ -40,6 +40,10 @@
 class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
 {
     private static $classInstance;
+    /**
+     * @var string
+     */
+    private $token;
 
     /**
      * Returns class instance
@@ -74,6 +78,25 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
         parent::__construct();
 
         $this->fieldDao = FBCONNECT_BOL_FieldDao::getInstance();
+    }
+
+    /**
+     *
+     * @return Facebook
+     */
+    public function getFaceBook()
+    {
+        $facebook = parent::getFaceBook();
+        $facebook->setAccessToken($this->token);
+        return $facebook;
+    }
+
+    /**
+     * @param string $token
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
     }
 
     public function initializeJs($scope = null, $shareData = null )
