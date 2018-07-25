@@ -282,7 +282,7 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
                 return array('email');
         }
 
-        return array('first_name', 'middle_name', 'last_name', 'name', 'link', "pic_square", "pic_big");
+        return array('first_name', 'middle_name', 'last_name', 'name', "pic_square", "pic_big");
     }
 
     public function assignQuestion($question, $fbField, $converter = 'FBCONNECT_FC_TextFieldConverter')
