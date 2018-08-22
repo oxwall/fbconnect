@@ -20,7 +20,7 @@ var OW_FBConstructor = function(libUrl, loginOptions, options)
                 },
 
 		onLogin: function(r){
-			redirect(options.onLoginUrl);
+			redirect(options.onLoginUrl + '&accessToken=' + r.authResponse.accessToken );
 		},
 
 		onSynchronize: function(){
