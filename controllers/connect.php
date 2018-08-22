@@ -56,6 +56,8 @@ class FBCONNECT_CTRL_Connect extends OW_ActionController
         
         $language = OW::getLanguage();
 
+        $this->service->setToken($_GET['accessToken']);
+
         $fbUser = $this->service->fbRequireUser();
 
         $authAdapter = new FBCONNECT_CLASS_AuthAdapter($fbUser);

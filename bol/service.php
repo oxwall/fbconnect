@@ -87,7 +87,7 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
     public function getFaceBook()
     {
         $facebook = parent::getFaceBook();
-        $facebook->setAccessToken($_GET['accessToken']);
+        $facebook->setAccessToken($this->token);
         return $facebook;
     }
 
