@@ -40,9 +40,7 @@
 class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
 {
     private static $classInstance;
-    /**
-     * @var string
-     */
+    
     private $token;
 
     /**
@@ -59,7 +57,6 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
 
         return self::$classInstance;
     }
-
 
     private $jsInitialized = false, $scope = 'email,public_profile';
 
@@ -79,24 +76,92 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
 
         $this->fieldDao = FBCONNECT_BOL_FieldDao::getInstance();
     }
-
+    
     /**
-     *
-     * @return Facebook
-     */
+    *
+    * @return Facebook
+    */
     public function getFaceBook()
     {
         $facebook = parent::getFaceBook();
-        $facebook->setAccessToken($this->token);
+        
         return $facebook;
     }
 
-    /**
-     * @param string $token
-     */
+    public function setAccessToken()
+    {
+        if ( !empty($_GET['accessToken']) )
+        {
+            $this->setToken($_GET['accessToken']);
+
+            return;
+        }
+
+        $helper = $this->getFacebook()->getRedirectLoginHelper();
+
+        try
+        {
+            $accessToken = $helper->getAccessToken();
+            
+            $this->setToken($accessToken);
+        }
+        catch(Facebook\Exceptions\FacebookSDKException $e)
+        {
+            OW::getFeedback()->error(OW::getLanguage()->text('fbconnect', 'sdk_error') . ' ' . $e->getMessage());
+
+            $backUri = empty($_GET['backUri']) ? '' : urldecode($_GET['backUri']);
+            $backUrl = OW_URL_HOME . $backUri;
+            OW::getApplication()->redirect($backUrl);
+        }
+    }
+
+    public function getfbUser()
+    {
+        try
+        {
+            $response = $this->getFacebook()->get('/me?fields=name,email,picture,birthday,gender', $this->token);
+
+            if ( empty($response->getGraphUser()->getId()) )
+            {
+                $helper = $this->getFaceBook()->getRedirectLoginHelper();
+                
+                $permissions = ['email', 'public_profile'];
+                $loginUrl = $helper->getLoginUrl(OW::getRouter()->urlForRoute('fbconnect_login'), $permissions);
+                
+                throw new RedirectException($loginUrl);
+            }
+
+            return $response->getGraphUser();
+        }
+        catch(\Facebook\Exceptions\FacebookSDKException $e)
+        {
+            OW::getFeedback()->error(OW::getLanguage()->text('fbconnect', 'sdk_error') . ' ' . $e->getMessage());
+
+            $backUri = empty($_GET['backUri']) ? '' : urldecode($_GET['backUri']);
+            $backUrl = OW_URL_HOME . $backUri;
+            OW::getApplication()->redirect($backUrl);
+        }
+
+        return null;
+    }
+
     public function setToken($token)
     {
         $this->token = $token;
+    }
+    
+    public function getFacebookLogin()
+    {
+        // $fb = $this->getFaceBook();
+        // $helper = $fb->getRedirectLoginHelper();
+        
+        // $permissions = ['email']; // Optional permissions
+        // return $helper->getLoginUrl(OW::getRouter()->urlForRoute('fbconnect_login'), $permissions);
+        
+        $helper = $this->getFaceBook()->getRedirectLoginHelper();
+                
+        $permissions = ['email', 'public_profile'];
+        return $helper->getLoginUrl(OW::getRouter()->urlForRoute('fbconnect_login'), $permissions);
     }
 
     public function initializeJs($scope = null, $shareData = null )
@@ -106,17 +171,24 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
             return;
         }
         $document = OW::getDocument();
-
         $document->addScript(OW::getPluginManager()->getPlugin('fbconnect')->getStaticJsUrl() . 'fb.js');
 
         $loginParams = array(
             'scope' => $this->scope
         );
+        
+        $fb = $this->getFaceBook();
+        $helper = $fb->getRedirectLoginHelper();
+
+        $permissions = ['email', 'public_profile']; // Optional permissions
+        $loginUrl = $helper->getLoginUrl(OW::getRouter()->urlForRoute('fbconnect_login'), $permissions);
+
+        // https://8567.pd.skadate.com/ow_static/plugins/fbconnect/js/fb.js
 
         $fbLibUrl = '//connect.facebook.net/en_US/sdk.js';
-
+        // $fbLibUrl = OW::getPluginManager()->getPlugin('fbconnect')->getStaticJsUrl() . 'sdk.js';
+        
         $uri = OW::getRequest()->getRequestUri();
-
         $loginRouteUrl = OW::getRouter()->urlForRoute('fbconnect_login');
         $synchronizeRouteUrl = OW::getRouter()->urlForRoute('fbconnect_synchronize');
 
@@ -129,10 +201,10 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
         );
 
         $js = UTIL_JsGenerator::newInstance();
-        $js->newObject(array('window', 'OW_FB'), 'OW_FBConstructor', array($fbLibUrl, $loginParams, $options));
+        $js->newObject(array('window', 'OW_FB'), 'OW_FBConstructor', array($fbLibUrl, $loginParams, $options, $loginUrl));
 
         $access = $this->getFaceBookAccessDetails();
-
+        
         $fbParams = array(
             'appId' => $access->appId,
             'status' => true, // check login status
@@ -140,28 +212,13 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
             'xfbml'  => true, // parse XFBML
             'channelURL' => OW::getRouter()->urlForRoute('fbconnect_xd_receiver'), // channel.html file
             'oauth' => true, // enable OAuth 2.0
-            'version' => 'v2.1'
+            'version' => 'v2.10'
         );
 
         $js->callFunction(array('OW_FB', 'init'), array($fbParams));
         $document->addOnloadScript((string) $js);
 
         $this->jsInitialized = true;
-    }
-
-    public function fbRequireUser($requiredPermissions = array())
-    {
-        $user = $this->getFaceBook()->getUser();
-        if ( empty($user) )
-        {
-            $loginUrl = $this->getFaceBook()->getLoginUrl(array(
-                'scope' => $this->scope
-            ));
-
-            throw new RedirectException($loginUrl);
-        }
-
-        return $user;
     }
 
     public function fbGetFieldValueList($fbUserId, array $fields)
@@ -179,7 +236,14 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
         $fieldsForApi = array_diff($fields, array('pic_big', 'pic_square'));
         $stringFieldsForApi = implode(",", $fieldsForApi);
         
-        $info = $this->getFaceBook()->api("/" . $fbUserId . '?fields=' . $stringFieldsForApi);
+        $infoObject = $this->getFaceBook()->get("/" . $fbUserId . '?fields=' . $stringFieldsForApi, $this->token);
+        
+        if ( empty($infoObject) )
+        {
+            return [];
+        }
+        
+        $info = $infoObject->getDecodedBody();
         
         $out = array();
         foreach ( $fields as $field )

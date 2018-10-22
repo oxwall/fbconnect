@@ -38,12 +38,6 @@
  */
 class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
 {
-    /**
-     *
-     * @var FBCONNECT_BOL_Service
-     */
-    private $service;
-
     public function __construct()
     {
         parent::__construct();
@@ -56,14 +50,10 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
 
         if ( OW::getRequest()->isPost() && $form->isValid($_POST) )
         {
-            if ( $form->process() )
-            {
-                OW::getFeedback()->info(OW::getLanguage()->text('fbconnect', 'register_app_success'));
-                $this->redirect(OW::getRouter()->urlForRoute('fbconnect_configuration_settings'));
-            }
-
-            OW::getFeedback()->error(OW::getLanguage()->text('fbconnect', 'register_app_failed'));
-            $this->redirect();
+            $form->process();
+            
+            OW::getFeedback()->info(OW::getLanguage()->text('fbconnect', 'register_app_success'));
+            $this->redirect(OW::getRouter()->urlForRoute('fbconnect_configuration_settings'));
         }
 
         OW::getDocument()->setHeading(OW::getLanguage()->text('fbconnect', 'heading_configuration'));
@@ -138,12 +128,7 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
             throw new Redirect404Exception();
         }
 
-        if ( FBCONNECT_BOL_AdminService::getInstance()->configureApplication() )
-        {
-            exit(json_encode(OW::getLanguage()->text('fbconnect', 'app_reset_success_msg')));
-        }
-
-        exit(json_encode(OW::getLanguage()->text('fbconnect', 'app_reset_failed_msg')));
+        exit(json_encode(OW::getLanguage()->text('fbconnect', 'app_reset_success_msg')));
     }
 }
 
@@ -182,7 +167,5 @@ class FBCONNECT_AccessForm extends Form
 
         $config->saveConfig('fbconnect', 'app_id', $apiId);
         $config->saveConfig('fbconnect', 'api_secret', $apiSecret);
-
-        return FBCONNECT_BOL_AdminService::getInstance()->configureApplication();
     }
 }

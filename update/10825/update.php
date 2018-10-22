@@ -29,23 +29,5 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-$plugin = OW::getPluginManager()->getPlugin('fbconnect');
-
-OW::getRouter()->addRoute(new OW_Route('fbconnect_login', 'facebook-connect/login', 'FBCONNECT_CTRL_Connect', 'login'));
-OW::getRouter()->addRoute(new OW_Route('fbconnect_synchronize', 'facebook-connect/synchronize', 'FBCONNECT_CTRL_Connect', 'synchronize'));
-OW::getRouter()->addRoute(new OW_Route('fbconnect_xd_receiver', 'fbconnect_channel.html', 'FBCONNECT_CTRL_Connect', 'xdReceiver'));
-
-$route = new OW_Route('fbconnect_configuration', 'admin/plugins/fbconnect', 'FBCONNECT_CTRL_Admin', 'index');
-OW::getRouter()->addRoute($route);
-
-$route = new OW_Route('fbconnect_configuration_settings', 'admin/plugins/fbconnect/settings', 'FBCONNECT_CTRL_Admin', 'settings');
-OW::getRouter()->addRoute($route);
-
-$route = new OW_Route('fbconnect_configuration_fields', 'admin/plugins/fbconnect/settings', 'FBCONNECT_CTRL_Admin', 'settings'); // backward compatibility
-OW::getRouter()->addRoute($route);
-
-$registry = OW::getRegistry();
-$registry->addToArray(BASE_CTRL_Join::JOIN_CONNECT_HOOK, array(new FBCONNECT_CMP_ConnectButton(), 'render'));
-
-$eventHandler = new FBCONNECT_CLASS_EventHandler();
-$eventHandler->init();
+$updateDir = dirname(__FILE__) . DS;
+Updater::getLanguageService()->importPrefixFromZip($updateDir . 'langs.zip', 'fbconnect');
