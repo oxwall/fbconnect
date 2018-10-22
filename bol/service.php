@@ -37,6 +37,8 @@
  * @since 1.0
  */
 
+use Facebook\Exceptions\FacebookSDKException;
+
 class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
 {
     private static $classInstance;
@@ -133,7 +135,7 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
 
             return $response->getGraphUser();
         }
-        catch(\Facebook\Exceptions\FacebookSDKException $e)
+        catch(Facebook\Exceptions\FacebookSDKException $e)
         {
             OW::getFeedback()->error(OW::getLanguage()->text('fbconnect', 'sdk_error') . ' ' . $e->getMessage());
 
@@ -152,12 +154,6 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
     
     public function getFacebookLogin()
     {
-        // $fb = $this->getFaceBook();
-        // $helper = $fb->getRedirectLoginHelper();
-        
-        // $permissions = ['email']; // Optional permissions
-        // return $helper->getLoginUrl(OW::getRouter()->urlForRoute('fbconnect_login'), $permissions);
-        
         $helper = $this->getFaceBook()->getRedirectLoginHelper();
                 
         $permissions = ['email', 'public_profile'];
@@ -183,10 +179,7 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
         $permissions = ['email', 'public_profile']; // Optional permissions
         $loginUrl = $helper->getLoginUrl(OW::getRouter()->urlForRoute('fbconnect_login'), $permissions);
 
-        // https://8567.pd.skadate.com/ow_static/plugins/fbconnect/js/fb.js
-
         $fbLibUrl = '//connect.facebook.net/en_US/sdk.js';
-        // $fbLibUrl = OW::getPluginManager()->getPlugin('fbconnect')->getStaticJsUrl() . 'sdk.js';
         
         $uri = OW::getRequest()->getRequestUri();
         $loginRouteUrl = OW::getRouter()->urlForRoute('fbconnect_login');
