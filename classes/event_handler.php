@@ -14,7 +14,6 @@ class FBCONNECT_CLASS_EventHandler
     public function afterUserRegistered( OW_Event $event )
     {
         $params = $event->getParams();
-        
 
         if ( $params['method'] != 'facebook' )
         {
@@ -92,14 +91,13 @@ class FBCONNECT_CLASS_EventHandler
     }
     
     public function onAfterUserCompleteProfile( OW_Event $event )
-    {        
-        
+    {
         $params = $event->getParams();
         $userId = !empty($params['userId']) ? (int) $params['userId'] : OW::getUser()->getId();
 
         $userCreditPreference = BOL_PreferenceService::getInstance()->getPreferenceValue('fbconnect_user_credits', $userId);
         
-        if( $userCreditPreference == 1 )
+        if ( $userCreditPreference == 1 )
         {
             BOL_AuthorizationService::getInstance()->trackAction("base", "user_join");
             

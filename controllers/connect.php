@@ -55,10 +55,13 @@ class FBCONNECT_CTRL_Connect extends OW_ActionController
         $backUrl = OW_URL_HOME . $backUri;
         
         $language = OW::getLanguage();
+        $this->service->getFacebook();
+        
+        $this->service->setAccessToken();
 
-        $this->service->setToken($_GET['accessToken']);
+        $fbUserObject = $this->service->getFbUser();
 
-        $fbUser = $this->service->fbRequireUser();
+        $fbUser = $fbUserObject->getId();
 
         $authAdapter = new FBCONNECT_CLASS_AuthAdapter($fbUser);
 
@@ -79,8 +82,6 @@ class FBCONNECT_CTRL_Connect extends OW_ActionController
         }
 
         //Register if not registered
-        
-
         $questions = $this->service->requestQuestionValueList($fbUser);
         
         if ( empty($questions["email"]) || empty($questions["username"]) )

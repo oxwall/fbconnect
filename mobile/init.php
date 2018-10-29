@@ -29,6 +29,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+require_once OW_DIR_PLUGIN . 'fbconnect' . DS . '../vendor/autoload.php';
+
 OW::getRouter()->addRoute(new OW_Route('fbconnect_login', 'facebook-connect/login', 'FBCONNECT_CTRL_Connect', 'login'));
 OW::getRouter()->addRoute(new OW_Route('fbconnect_synchronize', 'facebook-connect/synchronize', 'FBCONNECT_CTRL_Connect', 'synchronize'));
 OW::getRouter()->addRoute(new OW_Route('fbconnect_xd_receiver', 'fbconnect_channel.html', 'FBCONNECT_CTRL_Connect', 'xdReceiver'));

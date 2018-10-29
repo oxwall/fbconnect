@@ -1,55 +1,59 @@
-var OW_FBConstructor = function(libUrl, loginOptions, options)
+var OW_FBConstructor = function(libUrl, loginOptions, options, loginUrl)
 {
-	var self = this;
+    var self = this;
 
-	var redirect = function(href){
-		if (href) {
-			window.location.href = href;
-		} else {
-			window.location.reload(true);
-		}
-	};
-
-	this.delegates = {
-                beforeInit: function(){
-
-                },
-
-                afterInit: function(FB){
-
-                },
-
-		onLogin: function(r){
-			redirect(options.onLoginUrl + '&accessToken=' + r.authResponse.accessToken );
-		},
-
-		onSynchronize: function(){
-			redirect(options.onSynchronizeUrl);
-		}
-	};
-
-
-        this.init = function(params)
-        {
-            this.delegates.beforeInit();
-            $('body').prepend('<div id="fb-root"></div>');
-
-            window.fbAsyncInit = function() {
-                FB.init(params);
-
-                self.delegates.afterInit(FB);
-            };
-
-            (function() {
-                var e = document.createElement('script');
-                e.src = libUrl;
-                e.async = true;
-                document.getElementById('fb-root').appendChild(e);
-            }());
+    var redirect = function(href) {
+        if (href) {
+            window.location.href = href;
+        } else {
+            window.location.reload(true);
         }
+    };
 
-        this.requireLogin = function(func)
-        {
+    this.delegates = {
+        beforeInit: function(){
+
+        },
+
+        afterInit: function(FB){
+
+        },
+
+        onLogin: function(r){
+            redirect(options.onLoginUrl + '&accessToken=' + r.authResponse.accessToken );
+        },
+
+        onSynchronize: function(){
+            redirect(options.onSynchronizeUrl);
+        }
+    };
+
+
+    this.init = function(params)
+    {
+        this.delegates.beforeInit();
+        $('body').prepend('<div id="fb-root"></div>');
+
+        window.fbAsyncInit = function() {
+            FB.init(params);
+
+            self.delegates.afterInit(FB);
+        };
+
+        (function() {
+            var e = document.createElement('script');
+            e.src = libUrl;
+            e.async = true;
+            document.getElementById('fb-root').appendChild(e);
+        }());
+    };
+
+    this.requireLogin = function(func)
+    {
+        if (typeof FB == "undefined") {
+            window.location.href = loginUrl;
+        }
+        else {
             FB.getLoginStatus(function(response)
             {
                 if (response.authResponse)
@@ -64,23 +68,24 @@ var OW_FBConstructor = function(libUrl, loginOptions, options)
                         {
                             func(r);
                         }
-
+    
                     }, loginOptions);
                 }
             });
-        };
+        }
+    };
 
-	this.login = function()
-        {
-            this.requireLogin(function(r){
-                self.delegates.onLogin(r);
-            });
-	};
+    this.login = function()
+    {
+        this.requireLogin(function(r){
+            self.delegates.onLogin(r);
+        });
+    };
 
-	this.synchronize = function(delegate)
-        {
-            this.requireLogin(function(r){
-                self.delegates.onSynchronize(r);
-            });
-	};
+    this.synchronize = function(delegate)
+    {
+        this.requireLogin(function(r){
+            self.delegates.onSynchronize(r);
+        });
+    };
 };

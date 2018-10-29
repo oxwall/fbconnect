@@ -45,6 +45,5 @@ abstract class FBCONNECT_CLASS_ConverterBase
         $this->userId = $userId;
     }
 
-
     abstract public function convert( $question, $fbField, $value );
 }

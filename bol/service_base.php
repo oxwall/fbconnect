@@ -29,7 +29,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /**
  * Facebook Connect Service Base
  *
@@ -37,14 +36,9 @@
  * @package ow_plugins.fbconnect.bol
  * @since 1.0
  */
-require_once OW_DIR_LIB . 'facebook' . DS . 'facebook.php';
 
 class FBCONNECT_BOL_ServiceBase
 {
-    /**
-     *
-     * @var Facebook
-     */
     protected $faceBook;
     /**
      *
@@ -86,11 +80,12 @@ class FBCONNECT_BOL_ServiceBase
             $access = $this->getFaceBookAccessDetails();
 
             $params = array(
-                'appId' => $access->appId,
-                'secret' => $access->secret
+                'app_id' => $access->appId,
+                'app_secret' => $access->secret,
+                'default_graph_version' => 'v2.10'
             );
-
-            $this->faceBook = new Facebook($params);
+            
+            $this->faceBook = new Facebook\Facebook($params);
         }
 
         return $this->faceBook;
