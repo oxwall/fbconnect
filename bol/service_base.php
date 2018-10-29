@@ -37,8 +37,6 @@
  * @since 1.0
  */
 
-require_once OW_DIR_PLUGIN . 'fbconnect'  . DS . 'vendor/autoload.php';
-
 class FBCONNECT_BOL_ServiceBase
 {
     protected $faceBook;

@@ -41,6 +41,11 @@ use Facebook\Exceptions\FacebookSDKException;
 
 class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
 {
+    /**
+     * Facebook library url
+     */
+    const FB_LIB_URL = '//connect.facebook.net/en_US/sdk.js';
+
     private static $classInstance;
     
     private $token;
@@ -121,7 +126,7 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
     {
         try
         {
-            $response = $this->getFacebook()->get('/me?fields=name,email,picture,birthday,gender', $this->token);
+            $response = $this->getFacebook()->get('/me?fields=name,email,gender', $this->token);
 
             if ( empty($response->getGraphUser()->getId()) )
             {
@@ -152,7 +157,7 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
         $this->token = $token;
     }
     
-    public function getFacebookLogin()
+    public function getFacebookLoginUrl()
     {
         $helper = $this->getFaceBook()->getRedirectLoginHelper();
                 
@@ -172,14 +177,8 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
         $loginParams = array(
             'scope' => $this->scope
         );
-        
-        $fb = $this->getFaceBook();
-        $helper = $fb->getRedirectLoginHelper();
 
-        $permissions = ['email', 'public_profile']; // Optional permissions
-        $loginUrl = $helper->getLoginUrl(OW::getRouter()->urlForRoute('fbconnect_login'), $permissions);
-
-        $fbLibUrl = '//connect.facebook.net/en_US/sdk.js';
+        $loginUrl = $this->getFacebookLoginUrl();
         
         $uri = OW::getRequest()->getRequestUri();
         $loginRouteUrl = OW::getRouter()->urlForRoute('fbconnect_login');
@@ -194,7 +193,7 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
         );
 
         $js = UTIL_JsGenerator::newInstance();
-        $js->newObject(array('window', 'OW_FB'), 'OW_FBConstructor', array($fbLibUrl, $loginParams, $options, $loginUrl));
+        $js->newObject(array('window', 'OW_FB'), 'OW_FBConstructor', array(self::FB_LIB_URL, $loginParams, $options, $loginUrl));
 
         $access = $this->getFaceBookAccessDetails();
         
