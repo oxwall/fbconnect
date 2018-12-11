@@ -4,6 +4,10 @@ class FBCONNECT_CLASS_EventHandler
 {
     public function onCollectButtonList( BASE_CLASS_EventCollector $event )
     {
+        $faceBookDetails = FBCONNECT_BOL_Service::getInstance()->getFaceBookAccessDetails();
+
+        if ( empty($faceBookDetails->appId) || empty($faceBookDetails->secret) ) return;
+
         $cssUrl = OW::getPluginManager()->getPlugin('FBCONNECT')->getStaticCssUrl() . 'fbconnect.css';
         OW::getDocument()->addStyleSheet($cssUrl);
 
