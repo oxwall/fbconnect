@@ -112,7 +112,7 @@ class FBCONNECT_CLASS_EventHandler
     /**
      * @param OW_Event $event
      */
-    function onCompleteProfile( OW_Event $event )
+    public function onCompleteProfile( OW_Event $event )
     {
         $userId = OW::getUser()->getId();
 
