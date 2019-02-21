@@ -64,8 +64,6 @@ class FBCONNECT_CTRL_CompleteProfile extends BASE_CTRL_CompleteProfile
 
         $this->assign('questionArray', $questionArray);
 
-        //$questionData = $this->questionService->getQuestionData(array($user->id), $questionNameList);
-
         $questionValues = $this->questionService->findQuestionsValuesByQuestionNameList($questionNameList);
 
         $form->addQuestions($questions, $questionValues, array());
