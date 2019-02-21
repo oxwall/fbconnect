@@ -29,51 +29,5 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-$plugin = OW::getPluginManager()->getPlugin('fbconnect');
-
-$dbPrefix = OW_DB_PREFIX;
-
-$sql = 
-<<<EOT
-CREATE TABLE IF NOT EXISTS `{$dbPrefix}fbconnect_field` (
-  `id` int(11) NOT NULL auto_increment,
-  `question` varchar(50) NOT NULL,
-  `fbField` varchar(100) NOT NULL,
-  `converter` varchar(100) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
-
-INSERT INTO `{$dbPrefix}fbconnect_field` (`id`, `question`, `fbField`, `converter`) VALUES
-(1, 'realname', 'name', 'FBCONNECT_FC_TextFieldConverter'),
-(2, 'username', 'name', 'FBCONNECT_FC_Username'),
-(3, 'email', 'email', 'FBCONNECT_FC_TextFieldConverter'),
-(4, 'picture_small', 'pic_square', 'FBCONNECT_FC_Picture'),
-(5, 'picture_big', 'pic_big', 'FBCONNECT_FC_Picture');
-
-EOT;
-
-OW::getDbo()->query($sql);
-
-
-OW::getConfig()->addConfig('fbconnect', 'api_key', '', 'Facebook Api Key');
-OW::getConfig()->addConfig('fbconnect', 'app_id', '', 'Facebook Application ID');
-OW::getConfig()->addConfig('fbconnect', 'api_secret', '', 'Facebook Application Secret');
-OW::getConfig()->addConfig('fbconnect', 'admin_email', '', 'Index Email');
-
-OW::getPluginManager()->addPluginSettingsRouteName('fbconnect', 'fbconnect_configuration_settings');
-
-BOL_LanguageService::getInstance()->importPrefixFromZip($plugin->getRootDir() . 'langs.zip', 'fbconnect');
-
-$preference = BOL_PreferenceService::getInstance()->findPreference('fbconnect_user_credits');
-
-if ( empty($preference) )
-{
-    $preference = new BOL_Preference();
-}
-
-$preference->key = 'fbconnect_user_credits';
-$preference->sectionName = 'general';
-$preference->defaultValue = 0;
-$preference->sortOrder = 1;
-
-BOL_PreferenceService::getInstance()->savePreference($preference);
+$updateDir = dirname(__FILE__) . DS;
+Updater::getLanguageService()->importPrefixFromZip($updateDir . 'langs.zip', 'fbconnect');

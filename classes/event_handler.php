@@ -109,6 +109,50 @@ class FBCONNECT_CLASS_EventHandler
         }
     }
 
+    /**
+     * @param OW_Event $event
+     */
+    function onCompleteProfile( OW_Event $event )
+    {
+        $userId = OW::getUser()->getId();
+
+        if ( FBCONNECT_BOL_Service::getInstance()->isEmailAlias($userId) )
+        {
+            $params = $event->getParams();
+            $event->setData(OW::getClassInstanceArray('FBCONNECT_CTRL_CompleteProfile', $params['arguments']));
+        }
+    }
+
+    public function onAfterRoute( OW_Event $event )
+    {
+        if ( OW::getRequest()->isAjax() )
+        {
+            return;
+        }
+
+        if (!OW::getUser()->isAuthenticated())
+        {
+            return;
+        }
+
+        $userId = OW::getUser()->getId();
+
+        if ( OW::getUser()->isAdmin() )
+        {
+            return;
+        }
+
+        if ( FBCONNECT_BOL_Service::getInstance()->isEmailAlias($userId) )
+        {
+            OW::getRequestHandler()->setCatchAllRequestsAttributes('base.complete_profile', array('controller' => 'BASE_CTRL_CompleteProfile', 'action' => 'fillRequiredQuestions'));
+            OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_Console', 'listRsp');
+            OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_User', 'signOut');
+            OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'INSTALL_CTRL_Install');
+            OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_BaseDocument', 'installCompleted');
+            OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_AjaxLoader');
+            OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_AjaxComponentAdminPanel');
+        }
+    }
     
     public function genericInit()
     {
@@ -124,6 +168,9 @@ class FBCONNECT_CLASS_EventHandler
         
         OW::getEventManager()->bind('fbconnect.get_configuration', array($this, "getConfiguration"));
         OW::getEventManager()->bind(OW_EventManager::ON_AFTER_USER_COMPLETE_PROFILE, array($this, "onAfterUserCompleteProfile"));
+
+        OW::getEventManager()->bind(OW_EventManager::ON_AFTER_ROUTE, array($this, 'onAfterRoute'));
+        OW::getEventManager()->bind('class.get_instance.BASE_CTRL_CompleteProfile', array($this, 'onCompleteProfile'));
     }
     
     public function init()
