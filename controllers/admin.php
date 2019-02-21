@@ -100,6 +100,7 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
             OW::getConfig()->saveConfig('fbconnect', 'api_key', '');
             OW::getConfig()->saveConfig('fbconnect', 'api_secret', '');
             OW::getConfig()->saveConfig('fbconnect', 'app_id', '');
+            OW::getConfig()->saveConfig('fbconnect', 'admin_email', '');
             $redirectUrl = OW::getRequest()->buildUrlQueryString(null, array('rm-app' => null));
             $this->redirect($redirectUrl);
         }
@@ -151,6 +152,12 @@ class FBCONNECT_AccessForm extends Form
         $field->setValue($config->getValue('fbconnect', 'api_secret'));
         $this->addElement($field);
 
+        $field = new TextField('adminEmail');
+        $field->setRequired(true);
+        $field->setValue($config->getValue('fbconnect', 'admin_email'));
+        $field->addValidator(new EmailValidator());
+        $this->addElement($field);
+
         // submit
         $submit = new Submit('save');
         $submit->setValue(OW::getLanguage()->text('fbconnect', 'save_btn_label'));
@@ -164,8 +171,10 @@ class FBCONNECT_AccessForm extends Form
 
         $apiId = trim($values['appId']);
         $apiSecret = trim($values['secret']);
+        $adminEmail = trim($values['adminEmail']);
 
         $config->saveConfig('fbconnect', 'app_id', $apiId);
         $config->saveConfig('fbconnect', 'api_secret', $apiSecret);
+        $config->saveConfig('fbconnect', 'admin_email', $adminEmail);
     }
 }

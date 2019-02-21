@@ -299,6 +299,25 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
             $out[$fieldDto->question] = $converter->convert($fieldDto->question, $fieldDto->fbField, $fbFieldValues[$fieldDto->fbField]);
         }
 
+        if ( empty($out["email"]) )
+        {
+            $adminEmail = OW::getConfig()->getValue('fbconnect', 'admin_email');
+
+            if ( !empty($adminEmail) )
+            {
+                $lastUser = BOL_UserService::getInstance()->findLatestUserIdsList(0, 1);
+
+                if ( isset($lastUser[0]) )
+                {
+                    $aliasId = $lastUser[0]++;
+                }
+
+                $parseAdminEmail = explode('@', $adminEmail);
+
+                $out["email"] = $parseAdminEmail[0] . '+user' . $aliasId . '@' . $parseAdminEmail[1];
+            }
+        }
+
         return $out;
     }
 
@@ -383,5 +402,25 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
         }
 
         return $out;
+    }
+
+    public function isEmailAlias( $userId = null )
+    {
+        $adminEmail = OW::getConfig()->getValue('fbconnect', 'admin_email');
+
+        if ( !empty($adminEmail) )
+        {
+            $parseAdminEmail = explode('@', $adminEmail);
+            $aliasEmail = $parseAdminEmail[0] . '+user' . $userId . '@' . $parseAdminEmail[1];
+
+            $emailData = BOL_QuestionService::getInstance()->getQuestionData([$userId], ['email']);
+
+            if ( isset($emailData[$userId]['email']) && $emailData[$userId]['email'] == $aliasEmail )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

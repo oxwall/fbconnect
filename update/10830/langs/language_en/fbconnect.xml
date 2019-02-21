@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="fbconnect" label="Facebook Connect" language_tag="en" language_label="English">
+    <key name="register_app_desc"><value>&lt;p&gt;&#13;
+Follow these 3 simple steps to enable Facebook Connect on your site:&#13;
+&lt;/p&gt;&#13;
+&lt;ul class="ow_regular ow_stdmargin"&gt;&#13;
+&lt;li&gt;&#13;
+&lt;b&gt;&lt;a href="http://www.facebook.com/developers/createapp.php" target="_blank"&gt;Create application&lt;/a&gt;&lt;/b&gt; and set a name for it. It should be your social network name so users remember that they signed up.&#13;
+&lt;/li&gt;&#13;
+&lt;li&gt;You will be given &lt;b&gt;App ID&lt;/b&gt; and &lt;b&gt;App Secret&lt;/b&gt;. Copy them to the form below and you are all set!&#13;
+&lt;/li&gt;&#13;
+&lt;li&gt;Index Email - this email is used as index for facebook profiles that do not have an email. If you set Index Email as &lt;b&gt;admin@example.com&lt;/b&gt; those users will be automatically registered with &lt;b&gt;admin+userID@example.com&lt;/b&gt;&#13;
+&lt;/li&gt;&#13;
+&lt;/ul&gt;&#13;
+After that Facebook Connect will be ready to use!</value></key>
+    <key name="access_settings_admin_email_label"><value>Index Email</value></key>
+</prefix>
