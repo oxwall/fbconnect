@@ -29,5 +29,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-$updateDir = dirname(__FILE__) . DS;
-Updater::getLanguageService()->importPrefixFromZip($updateDir . 'langs.zip', 'fbconnect');
+$pluginKey = 'fbconnect';
+$config = OW::getConfig();
+
+Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs', true);
+
+if ( !$config->configExists($pluginKey, 'admin_email') )
+{
+    $config->addConfig($pluginKey, 'admin_email', 'Index Email');
+}
