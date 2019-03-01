@@ -305,12 +305,7 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
 
             if ( !empty($adminEmail) )
             {
-                $lastUser = BOL_UserService::getInstance()->findLatestUserIdsList(0, 1);
-
-                if ( isset($lastUser[0]) )
-                {
-                    $aliasId = $lastUser[0]++;
-                }
+                $aliasId = $this->getAliasId();
 
                 $parseAdminEmail = explode('@', $adminEmail);
 
@@ -422,5 +417,15 @@ class FBCONNECT_BOL_Service extends FBCONNECT_BOL_ServiceBase
         }
 
         return false;
+    }
+
+    public function getAliasId()
+    {
+        $dbName = OW_DB_NAME;
+        $tableName = BOL_UserDao::getInstance()->getTableName();
+
+        $sql = "SELECT `AUTO_INCREMENT` FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$dbName}' AND TABLE_NAME = '{$tableName}';";
+
+        return OW::getDbo()->queryForColumn($sql);
     }
 }
