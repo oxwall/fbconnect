@@ -43,23 +43,6 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
         parent::__construct();
     }
 
-    public function index()
-    {
-        $form = new FBCONNECT_AccessForm();
-        $this->addForm($form);
-
-        if ( OW::getRequest()->isPost() && $form->isValid($_POST) )
-        {
-            $form->process();
-            
-            OW::getFeedback()->info(OW::getLanguage()->text('fbconnect', 'register_app_success'));
-            $this->redirect(OW::getRouter()->urlForRoute('fbconnect_configuration_settings'));
-        }
-
-        OW::getDocument()->setHeading(OW::getLanguage()->text('fbconnect', 'heading_configuration'));
-        OW::getDocument()->setHeadingIconClass('ow_ic_key');
-    }
-
     private function getMenu()
     {
         $language = OW::getLanguage();
@@ -68,7 +51,7 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
 
         $item = new BASE_MenuItem();
         $item->setLabel($language->text('fbconnect', 'menu_item_configuration_settings'));
-        $item->setUrl(OW::getRouter()->urlForRoute('fbconnect_configuration_settings'));
+        $item->setUrl(OW::getRouter()->urlForRoute('fbconnect_configuration'));
         $item->setKey('fbconnect_settings');
         $item->setIconClass('ow_ic_gear_wheel');
         $item->setOrder(0);
@@ -78,48 +61,40 @@ class FBCONNECT_CTRL_Admin extends ADMIN_CTRL_Abstract
         return new BASE_CMP_ContentMenu($menuItems);
     }
 
-    private function requireAppId()
-    {
-        $configs = OW::getConfig()->getValues('fbconnect');
-
-        $wizardUrl = OW::getRouter()->urlForRoute('fbconnect_configuration');
-        if ( empty($configs['app_id']) || empty($configs['api_secret']) )
-        {
-            $this->redirect($wizardUrl);
-        }
-
-        return $configs['app_id'];
-    }
-
-    public function settings( $params )
+    public function index()
     {
         $appId = $this->requireAppId();
-
-        if ( !empty($_GET['rm-app']) && $_GET['rm-app'] == 1 )
-        {
-            OW::getConfig()->saveConfig('fbconnect', 'api_key', '');
-            OW::getConfig()->saveConfig('fbconnect', 'api_secret', '');
-            OW::getConfig()->saveConfig('fbconnect', 'app_id', '');
-            OW::getConfig()->saveConfig('fbconnect', 'admin_email', '');
-            $redirectUrl = OW::getRequest()->buildUrlQueryString(null, array('rm-app' => null));
-            $this->redirect($redirectUrl);
-        }
 
         $cssUrl = OW::getPluginManager()->getPlugin('FBCONNECT')->getStaticCssUrl() . 'fbconnect.css';
         OW::getDocument()->addStyleSheet($cssUrl);
 
         $this->addComponent('menu', $this->getMenu());
-        OW::getDocument()->setHeading(OW::getLanguage()->text('fbconnect', 'heading_configuration'));
-        OW::getDocument()->setHeadingIconClass('ow_ic_key');
 
         $editAppUrl = OW::getRequest()->buildUrlQueryString('http://www.facebook.com/developers/editapp.php', array('app_id' => $appId));
-
         $this->assign('appUrl', $editAppUrl);
 
-        $removeAppUrl = OW::getRequest()->buildUrlQueryString(null, array('rm-app' => 1));
-        $this->assign('deleteUrl', $removeAppUrl);
-
         $this->assign('resetRspUrl', OW::getRouter()->urlFor('FBCONNECT_CTRL_Admin', 'ajaxResetApplication'));
+
+        $form = new FBCONNECT_AccessForm();
+        $this->addForm($form);
+
+        if ( OW::getRequest()->isPost() && $form->isValid($_POST) )
+        {
+            $form->process();
+
+            OW::getFeedback()->info(OW::getLanguage()->text('fbconnect', 'register_app_success'));
+            $this->redirect(OW::getRouter()->urlForRoute('fbconnect_configuration'));
+        }
+
+        OW::getDocument()->setHeading(OW::getLanguage()->text('fbconnect', 'heading_configuration'));
+        OW::getDocument()->setHeadingIconClass('ow_ic_key');
+    }
+
+    private function requireAppId()
+    {
+        $configs = OW::getConfig()->getValues('fbconnect');
+
+        return $configs['app_id'];
     }
 
     public function ajaxResetApplication()

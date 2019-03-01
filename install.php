@@ -60,9 +60,9 @@ OW::getConfig()->addConfig('fbconnect', 'app_id', '', 'Facebook Application ID')
 OW::getConfig()->addConfig('fbconnect', 'api_secret', '', 'Facebook Application Secret');
 OW::getConfig()->addConfig('fbconnect', 'admin_email', '', 'Index Email');
 
-OW::getPluginManager()->addPluginSettingsRouteName('fbconnect', 'fbconnect_configuration_settings');
+OW::getPluginManager()->addPluginSettingsRouteName('fbconnect', 'fbconnect_configuration');
 
-BOL_LanguageService::getInstance()->importPrefixFromZip($plugin->getRootDir() . 'langs.zip', 'fbconnect');
+OW::getLanguage()->importLangsFromDir($plugin->getRootDir() . 'langs');
 
 $preference = BOL_PreferenceService::getInstance()->findPreference('fbconnect_user_credits');
 

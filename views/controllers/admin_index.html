@@ -1,8 +1,49 @@
+{script}{literal}
+
+$('#fbc-reset').click(function(){
+    var self = this, rsp = $(this).attr('ow_rsp');
+
+    OW.inProgressNode(self);
+    $('#fbc-reset-preloader').show();
+    $.getJSON(rsp, function(message){
+        OW.info(message);
+        OW.activateNode(self);
+        $('#fbc-reset-preloader').hide();
+    });
+
+});
+
+{/literal}{/script}
+
+{style}{literal}
+
+#fbc-reset-preloader {
+    display: inline-block;
+    width: 16px;
+    height: 11px;
+    margin-bottom: -1px;
+}
+
+sup {
+    top: -.5em;
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+}
+
+{/literal}{/style}
+
+{$menu}
+
 {form name='FBCONNECT_AccessForm'}
 
 {block_decorator name='box' addClass='ow_stdmargin' type="empty"}
-    {text key="fbconnect+register_app_desc"}
+
+{text key='fbconnect+register_app_desc'}
+<p><sup>*</sup><a href="{$appUrl}" target="_blank">{text key='fbconnect+settings_setup_guide_link'}</a></p>
+
 {/block_decorator}
+
 <table class="ow_table_1 ow_form">
     <tr class="ow_tr_first">
         <th class="ow_name ow_txtleft" colspan="3">
@@ -22,7 +63,7 @@
     <tr class="{cycle name="install" values="ow_alt1,ow_alt2"} ow_tr_last">
         <td class="ow_label">{text key='fbconnect+access_settings_admin_email_label'}</td>
         <td class="ow_value">{input name='adminEmail'} {error name='adminEmail'}</td>
-        <td class="ow_desc"></td>
+        <td class="ow_desc">Index Email - this email is used as index for facebook profiles that do not have an email. If you set Index Email as <b>admin@example.com</b> those users will be automatically registered with <b>admin+userID@example.com</b></td>
     </tr>
    
 </table>

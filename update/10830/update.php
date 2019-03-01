@@ -34,6 +34,8 @@ $config = OW::getConfig();
 
 Updater::getLanguageService()->importPrefixFromDir(__DIR__ . DS . 'langs', true);
 
+OW::getPluginManager()->addPluginSettingsRouteName($pluginKey, 'fbconnect_configuration');
+
 if ( !$config->configExists($pluginKey, 'admin_email') )
 {
     $config->addConfig($pluginKey, 'admin_email', 'Index Email');
