@@ -144,7 +144,6 @@ class FBCONNECT_CLASS_EventHandler
 
         if ( FBCONNECT_BOL_Service::getInstance()->isEmailAlias($userId) )
         {
-            OW::getRequestHandler()->setCatchAllRequestsAttributes('base.complete_profile', array('controller' => 'BASE_CTRL_CompleteProfile', 'action' => 'fillRequiredQuestions'));
             OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_Console', 'listRsp');
             OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'BASE_CTRL_User', 'signOut');
             OW::getRequestHandler()->addCatchAllRequestsExclude('base.complete_profile', 'INSTALL_CTRL_Install');
