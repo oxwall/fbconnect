@@ -82,7 +82,7 @@ class FBCONNECT_BOL_ServiceBase
             $params = array(
                 'app_id' => $access->appId,
                 'app_secret' => $access->secret,
-                'default_graph_version' => 'v2.10'
+                'default_graph_version' => 'v4.0'
             );
             
             $this->faceBook = new Facebook\Facebook($params);
