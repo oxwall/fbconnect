@@ -170,6 +170,11 @@ class FBCONNECT_CLASS_EventHandler
 
         OW::getEventManager()->bind(OW_EventManager::ON_AFTER_ROUTE, array($this, 'onAfterRoute'));
         OW::getEventManager()->bind('class.get_instance.BASE_CTRL_CompleteProfile', array($this, 'onCompleteProfile'));
+
+        OW::getEventManager()->bind('base.members_only_exceptions', array($this, 'addFacebookException'));
+        OW::getEventManager()->bind('base.splash_screen_exceptions', array($this, 'addFacebookException'));
+        OW::getEventManager()->bind('base.password_protected_exceptions', array($this, 'addFacebookException'));
+
     }
     
     public function init()
@@ -194,4 +199,11 @@ class FBCONNECT_CLASS_EventHandler
 
         spl_autoload_register($fbConnectAutoLoader);
     }
+
+    public function addFacebookException( BASE_CLASS_EventCollector $e )
+    {
+        $e->add(array('controller' => 'FBCONNECT_CTRL_Connect', 'action' => 'login'));
+    }
+
+
 }
